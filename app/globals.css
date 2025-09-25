@@ -5,12 +5,7 @@
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* Mapping (previously in @theme inline) retained as CSS variables usage in code */
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -24,3 +19,137 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Retro Diner Palette */
+:root {
+  --diner-red: #ff2d2d;
+  --diner-yellow: #ffc529;
+  --diner-teal: #038c8c;
+  --diner-deep-teal: #004d4d;
+  --diner-bg: #082f32;
+}
+
+/* Background pattern: subtle mural of fries/burger/soda icons using emoji layering */
+.diner-bg {
+  /* Large red & white diagonal stripes */
+  --stripe-red: #d90429;
+  --stripe-white: #ffffff;
+  background: repeating-linear-gradient(
+    135deg,
+    var(--stripe-red) 0 140px,
+    var(--stripe-white) 140px 280px
+  ); /* continuous full stripes */
+  position: relative;
+  isolation: isolate;
+}
+.diner-bg:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 55%, rgba(0,0,0,0.25), rgba(0,0,0,0.55));
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Neon text effect */
+.neon {
+  color: var(--diner-yellow);
+  text-shadow:
+    0 0 4px rgba(255,197,41,0.9),
+    0 0 10px rgba(255,197,41,0.7),
+    0 0 18px rgba(255,45,45,0.4),
+    0 0 32px rgba(3,140,140,0.35);
+}
+.neon-pulse {
+  display: inline-block;
+  animation: neonPulse 3s ease-in-out infinite;
+}
+@keyframes neonPulse {
+  0%, 100% { filter: brightness(1); text-shadow: 0 0 4px #ffc529, 0 0 10px #ffc529, 0 0 20px #ff2d2d; }
+  50% { filter: brightness(1.25); text-shadow: 0 0 6px #ffe08a, 0 0 16px #ff2d2d, 0 0 30px #ff2d2d, 0 0 42px #038c8c; }
+}
+
+/* Receipt style */
+.receipt {
+  background: repeating-linear-gradient(
+      to bottom,
+      #fff,
+      #fff 24px,
+      #f9f9f9 24px,
+      #f9f9f9 48px
+    );
+  position: relative;
+  overflow: hidden;
+}
+.receipt:before, .receipt:after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  height: 6px;
+  background:
+    linear-gradient(90deg, var(--diner-red) 0 12%, var(--diner-yellow) 0 24%, var(--diner-teal) 0 36%, var(--diner-red) 0 48%, var(--diner-yellow) 0 60%, var(--diner-teal) 0 72%, var(--diner-red) 0 84%, var(--diner-yellow) 0 96%, var(--diner-teal) 0 100%);
+  background-size: 300% 100%;
+  animation: stripeSlide 14s linear infinite;
+}
+.receipt:before { top:0; }
+.receipt:after { bottom:0; }
+@keyframes stripeSlide { 0% { background-position:0 0;} 100% { background-position: -300% 0;} }
+
+/* Falling fries */
+.fries-layer .fry {
+  position: absolute;
+  top: -5%;
+  width: 10px;
+  height: 46px;
+  border-radius: 3px 3px 6px 6px;
+  background: linear-gradient(to bottom, #ffde73, #e39c00 60%, #ffde73);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15), 0 0 6px rgba(255,197,41,0.4);
+  animation: fryFall linear forwards;
+  pointer-events: none;
+}
+@keyframes fryFall {
+  0% { transform: translateY(-120%) scale(var(--scale,1)) rotate(var(--rot,0deg)); opacity: 0; }
+  5% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(120vh) scale(var(--scale,1)) rotate(var(--rot,0deg)); opacity: 0; }
+}
+
+/* Milkshake wobble */
+.milkshake { animation: none; }
+.milkshake:hover { animation: shake 0.8s ease-in-out; }
+@keyframes shake {
+  0%,100% { transform: rotate(0deg) translateY(0); }
+  15% { transform: rotate(6deg) translateY(-2px); }
+  30% { transform: rotate(-5deg) translateY(1px); }
+  45% { transform: rotate(4deg) translateY(-1px); }
+  60% { transform: rotate(-3deg); }
+  75% { transform: rotate(2deg); }
+}
+
+/* Modal shadow glow */
+.shadow-neon {
+  box-shadow:
+    0 0 6px rgba(255,197,41,0.5),
+    0 0 14px rgba(255,45,45,0.35),
+    0 0 28px rgba(3,140,140,0.45);
+}
+.neon-sub { color: var(--diner-yellow); text-shadow: 0 0 4px #ffc529, 0 0 12px #ff2d2d; }
+
+/* Accessibility: reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .neon-pulse, .fries-layer .fry, .receipt:before, .receipt:after { animation: none !important; }
+}
+
+/* Animations */
+.animate-fade-in { animation: fadeIn 0.6s ease forwards; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(4px);} to { opacity:1; transform: translateY(0);} }
+
+/* Responsive tweaks */
+@media (max-width:600px) {
+  .receipt { padding: 4rem 1.25rem 2.75rem; }
+}
+
+/* Utility overrides */
+.fries-icon:hover { filter: drop-shadow(0 0 6px rgba(255,197,41,0.7)); }
+
